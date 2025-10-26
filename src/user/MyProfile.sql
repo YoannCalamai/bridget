@@ -20,7 +20,7 @@ select
 
 -- Form
 SELECT 'form' AS component,
-        './myprofileUpdate.sql' || COALESCE('?id=' || $id, '') as action,
+        './myprofileUpdate.sql' as action,
         'Modify my profile' AS title,
         'Modify' AS validate;
 
@@ -73,3 +73,15 @@ SELECT
     CASE COALESCE(sqlpage.cookie('lightdarkstatus'),'')
     WHEN '' THEN 'dark'
     ELSE 'light' END as outline;
+
+SELECT 'form' AS component,
+        './userChangepassword.sql?id=' || UserId as action,
+        'Change your password' AS title,
+        'Change your password' AS validate
+FROM GetUserFromSession WHERE Session = sqlpage.cookie('session');
+SELECT 'Password' AS name, 
+        'Password' as label,
+        'password' AS type,
+        1 as required,
+        '^.*(?=.{12,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&? "]).*$' AS pattern, 
+        'Your password must contain at least 12 characters including at least a letter, a number and a special char (!#$%&? ").' AS description;

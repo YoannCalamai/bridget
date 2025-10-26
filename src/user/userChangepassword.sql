@@ -4,7 +4,7 @@ select 'dynamic' as component, sqlpage.run_sql('include/sessioncheck-admin.sql')
 -- Check input
 SELECT 'redirect' AS component,
         './Users.sql' AS link
-WHERE coalesce($id::int,0) <= 0;
+WHERE coalesce($id::int,-1) < 0;
 
 -- Upsert
 UPDATE CoreUser 
@@ -15,4 +15,5 @@ SET PasswordHash=sqlpage.hash_password(:Password),
 WHERE UserId=$id::int
 RETURNING
     'redirect' AS component,
-    './User.sql?id='|| $id ||'&successpwd' as link;
+    --'./User.sql?id='|| $id ||'&successpwd' as link;
+    '/home.sql' as link;
