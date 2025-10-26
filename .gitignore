@@ -1,0 +1,8 @@
+*.db
+*.db-journal
+*.bin
+.env
+snipets.sql
+todo
+notes
+backup/

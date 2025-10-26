@@ -1,0 +1,30 @@
+services:
+  app:
+    # latest == latest stable version
+    # main == latest dev version
+    image: lovasoa/sqlpage:latest      
+    working_dir: /var/www
+    volumes:
+      - ./src:/var/www
+      - ./config:/etc/sqlpage
+    ports:
+      - "8080:8080"
+    depends_on:
+      [db]
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db/${DB_NAME}
+      allow_exec: true
+
+  db:
+    image: postgres:17
+    volumes:
+      - sqlpagedatabasefiles:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+volumes:
+  sqlpagedatabasefiles:

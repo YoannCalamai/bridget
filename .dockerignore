@@ -1,0 +1,13 @@
+*.db
+*.db-journal
+*.bin
+README.md
+*Dockerfile
+.dockerignore
+.gitignore
+.env
+.git/
+snipets.sql
+todo
+docker-compose.yml
+notes
