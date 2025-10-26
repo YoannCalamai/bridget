@@ -2,10 +2,9 @@
 # main == latest dev version
 FROM lovasoa/sqlpage:latest
 
-LABEL 	vendor="changeme" \
-	product="changeme" \
+LABEL 	product="bridget" \
         version="vVERSIONNUMBERPLACEHOLDER" \
-    	maintainer="changeme"
+    	maintainer="Yoann Calamai <bridget@marmous.net>"
 
 USER root
 WORKDIR /var/www
