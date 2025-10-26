@@ -1,0 +1,106 @@
+variables:
+  imagename: bridget
+
+stages:
+  - build
+  - scan
+  - test
+  - publish
+  - cleanup
+
+build:setversion:
+  stage: build
+  tags:
+    - docker
+  before_script:
+    - export COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
+    - export VERSION="$(date -d @$COMMIT_TIME '+%Y.%-m.%-d.%H%M')"
+  script:
+    - sed -i "s/VERSIONNUMBERPLACEHOLDER/$VERSION/g" Dockerfile
+    - sed -i "s/VERSIONNUMBERPLACEHOLDER/$VERSION/g" src/appsettings/SystemInfo.sql
+  artifacts:
+    paths:
+    - Dockerfile
+    - src/appsettings/SystemInfo.sql
+
+build:dockerimage:
+  stage: build
+  tags:
+    - docker
+  before_script:
+    - export COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
+    - export VERSION="$(date -d @$COMMIT_TIME '+%Y.%-m.%-d.%H%M')"
+  script:
+    - docker build -t $user/$imagename:latest .
+    - docker image tag "$user/$imagename:latest" "$user/$imagename:$VERSION"
+  needs:
+  - build:setversion
+
+
+## Security tests
+#include:
+#- template: Security/Container-Scanning.gitlab-ci.yml
+#- template: Security/SAST.gitlab-ci.yml
+#- template: Security/Secret-Detection.gitlab-ci.yml
+
+#container_scanning:
+#  variables:
+#    CS_IMAGE: "$user/$imagename:latest"
+#    CONTAINER_SCANNING_DISABLED: 'false'
+
+#sast:
+#  stage: test
+
+## Dependances management
+#dependancescan-renovate:
+#  stage: scan
+#  tags:
+#  - docker
+#  script:
+#  - docker run -e RENOVATE_PLATFORM=gitlab -e RENOVATE_TOKEN=$RENOVATE_TOKEN -e RENOVATE_ENDPOINT=$CI_API_V4_URL
+#    -e RENOVATE_AUTODISCOVER=true -e RENOVATE_AUTODISCOVER_FILTER="$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME"
+#    renovate/renovate
+
+## Docker image performance
+performancescan-dive:
+  stage: scan
+  tags:
+  - docker
+  script:
+  - docker pull ghcr.io/wagoodman/dive
+  - docker run --rm -e CI=true -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/wagoodman/dive $user/$imagename:latest
+
+publish:dockerimage:
+  stage: publish 
+  tags:
+    - docker
+  before_script:
+    - export COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
+    - export VERSION="$(date -d @$COMMIT_TIME '+%Y.%-m.%-d.%H%M')"
+  script:
+    - echo $password | docker login -u $user --password-stdin
+    - docker push $user/$imagename:latest
+    - docker push $user/$imagename:$VERSION
+  when: on_success
+  needs:
+  - build:dockerimage
+ # - container_scanning
+ # - secret_detection
+ # - dependancescan-renovate
+  only:
+    - main
+
+cleanup:dockerimage:
+  stage: cleanup
+  tags:
+    - docker
+  before_script:
+    - export COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
+    - export VERSION="$(date -d @$COMMIT_TIME '+%Y.%-m.%-d.%H%M')"
+  script:
+    - docker image rm $user/$imagename:latest
+    - docker image rm $user/$imagename:$VERSION
+  when: always
+  allow_failure: true
+  needs:
+  - publish:dockerimage
