@@ -8,6 +8,7 @@ select 'dynamic' as component, sqlpage.run_sql('include/shell-user.sql') as prop
 SELECT 'text' AS component,
         (select 'Hi, ' || Firstname || ' !' from GetUserFromSession where Session = sqlpage.cookie('session')) AS title;
 
+----------------------
 -- Display report parameters form
 SELECT 'form' AS component,
     'Display parameters' AS title,
@@ -48,6 +49,7 @@ SELECT 'CategoryId' AS name,
     CASE WHEN :CategoryId IS NULL THEN '' 
     ELSE :CategoryId END as value;
 
+----------------------
 -- Display statistics
 SELECT 'datagrid' AS component;
 SELECT 'Transactions' AS title,
@@ -94,7 +96,8 @@ AND (COALESCE(NULLIF(:CategoryId, ''), '-1')::int = -1
      OR CategoryId = :CategoryId::int)
 AND Date between :startdate::date and :enddate::date;
 
--- charts
+----------------------
+-- Charts
 select 
     'card' as component,
     2 as columns;
@@ -113,6 +116,22 @@ select
                           ELSE '&categoryid=' ||:CategoryId::int END ||
                           '&_sqlpage_embed' as embed;
 
+select 
+    'card' as component,
+    2 as columns;
+select 
+    '/charts/creditbycat.sql?AccountId='|| :AccountId ||
+                          '&startdate='|| :startdate ||
+                          '&enddate='|| :enddate ||
+                          '&_sqlpage_embed' as embed;
+select 
+    '/charts/creditbytag.sql?AccountId='|| :AccountId ||
+                          '&startdate='|| :startdate ||
+                          '&enddate='|| :enddate ||
+                          '&_sqlpage_embed' as embed;
+
+
+----------------------
 -- Show transactions
 SELECT 'table' AS component,
     'List of Transactions' AS title,
