@@ -52,6 +52,16 @@ SELECT 'csv_file' AS name,
     '.csv' AS accept,
     TRUE AS required;
 
+
+-- List of imported files
+SELECT 'table' as component,
+'/budget/importfileDelete.sql?id={id}' as delete_url;
+SELECT  name, 
+        uploaded_at,
+        id as _sqlpage_id
+FROM uploaded_file
+ORDER BY uploaded_at desc;
+
 -- Display statistics
 SELECT 'datagrid' AS component;
 SELECT 'Transactions' AS title,
