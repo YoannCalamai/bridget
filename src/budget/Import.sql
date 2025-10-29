@@ -43,6 +43,7 @@ SELECT 'AccountId' AS name,
                 json_build_object('label', Name, 'value', AccountId)
             )
         FROM BudAccount
+        WHERE UserId= (SELECT UserId FROM GetUserFromSession WHERE Session = sqlpage.cookie('session'))
     ) as options,
     TRUE AS required;
 SELECT 'csv_file' AS name,

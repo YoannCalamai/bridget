@@ -36,6 +36,7 @@ SELECT
     '[Edit](./BankAccount.sql?id=' || AccountId ||')' as Action,
     Name
 FROM BudAccount
+WHERE UserId= (SELECT UserId FROM GetUserFromSession WHERE Session = sqlpage.cookie('session'))
 ORDER BY Name;
 
 SELECT 'button' as component,

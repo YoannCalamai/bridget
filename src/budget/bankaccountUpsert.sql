@@ -8,11 +8,12 @@ WHERE coalesce($id::int,0)>0
 AND $id::int NOT IN (SELECT AccountId FROM BudAccount);
 
 -- Upsert
-INSERT INTO BudAccount (AccountId, Name) 
+INSERT INTO BudAccount (AccountId, Name, UserId) 
 VALUES 
 (       
         coalesce($id::int,(select coalesce(max(AccountId),0) from BudAccount) + 1),
-        :Name
+        :Name,
+        (SELECT UserId FROM GetUserFromSession WHERE Session = sqlpage.cookie('session'))
 )
 ON CONFLICT (AccountId) DO 
 UPDATE SET Name = excluded.Name

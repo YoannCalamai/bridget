@@ -21,6 +21,7 @@ SELECT 'AccountId' AS name,
                 json_build_object('label', Name, 'value', AccountId)
             )
         FROM BudAccount
+        WHERE UserId= (SELECT UserId FROM GetUserFromSession WHERE Session = sqlpage.cookie('session'))
     ) as options,
     TRUE AS required;
 SELECT 'startdate' AS name,
@@ -205,6 +206,3 @@ AND (COALESCE(NULLIF(:CategoryId, ''), '-1')::int = -1
 AND (COALESCE(NULLIF(:SubcategoryId, ''), '-1')::int = -1 
      OR t.SubCategoryId = :SubcategoryId::int)
 ORDER BY Date DESC, Transactionid DESC;
-
-select 'debug' as component;
-select :displaychart, COALESCE(NULLIF(:displaychart, ''), 'false')::bool;
