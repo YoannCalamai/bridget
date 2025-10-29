@@ -19,6 +19,8 @@ select
     TRUE   as active;
 
 -- Page start
+
+----- CATEGORIES
 SELECT 'divider' as component,
        'Categories' as contents;
 
@@ -48,6 +50,38 @@ SELECT 'Add a category' as title,
         'primary' as color,
         'square-rounded-plus' as icon;
 
+
+----- SUBCATEGORIES
+SELECT 'divider' as component,
+       'Subcategories' as contents;
+
+SELECT 'button' as component,
+        'sm' as size;
+SELECT 'Add a subcategory' as title,
+        './Subcategory.sql' as link,
+        'primary' as color,
+        'square-rounded-plus' as icon;
+
+SELECT 
+    'table' as component,
+    'IsActive' as icon,
+    'action' as markdown,
+    1 as sort,
+    1 as search;
+SELECT
+    '[Edit](./Subcategory.sql?id=' || SubCategoryId ||')' as Action,
+    Name
+FROM BudSubCategory
+ORDER BY Name;
+
+SELECT 'button' as component,
+        'sm' as size;
+SELECT 'Add a subcategory' as title,
+        './Subcategory.sql' as link,
+        'primary' as color,
+        'square-rounded-plus' as icon;
+
+----- TAGS
 SELECT 'divider' as component,
        'Tags' as contents;
 

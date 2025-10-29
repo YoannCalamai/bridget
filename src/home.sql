@@ -48,6 +48,25 @@ SELECT 'CategoryId' AS name,
     ) as options,
     CASE WHEN :CategoryId IS NULL THEN '' 
     ELSE :CategoryId END as value;
+SELECT 'SubcategoryId' AS name,
+    'select' AS type,
+    'Sub Category' AS label,
+    true as searchable,
+    '-- No selection' as empty_option,
+    (
+        SELECT json_agg(
+                json_build_object('label', Name, 'value', SubCategoryId)
+            )
+        FROM BudSubCategory
+    ) as options,
+    CASE WHEN :SubcategoryId IS NULL THEN '' 
+    ELSE :SubcategoryId END as value;
+
+-- SELECT 'displaychart' AS name,
+--     'checkbox' AS type,
+--     'Display charts' AS label,
+--      COALESCE(NULLIF(:displaychart, ''), 'true')::bool,
+--      0 AS required;
 
 ----------------------
 -- Display statistics
@@ -100,29 +119,48 @@ AND Date between :startdate::date and :enddate::date;
 -- Charts
 select 
     'card' as component,
-    2 as columns;
+    2 as columns
+WHERE NOT COALESCE(NULLIF(:displaychart, ''), 'false')::bool;
 select 
     '/charts/debitbycat.sql?AccountId='|| :AccountId ||
                           '&startdate='|| :startdate ||
                           '&enddate='|| :enddate ||
                           CASE WHEN COALESCE(NULLIF(:CategoryId, ''), '-1')::int =-1 THEN ''
                           ELSE '&categoryid=' ||:CategoryId::int END ||
-                          '&_sqlpage_embed' as embed;
+                          '&_sqlpage_embed' as embed
+WHERE NOT COALESCE(NULLIF(:displaychart, ''), 'false')::bool;
 select 
-    '/charts/debitbytag.sql?AccountId='|| :AccountId ||
+    '/charts/creditbycat.sql?AccountId='|| :AccountId ||
+                          '&startdate='|| :startdate ||
+                          '&enddate='|| :enddate ||
+                          '&_sqlpage_embed' as embed
+WHERE NOT COALESCE(NULLIF(:displaychart, ''), 'false')::bool;
+
+select 
+    'card' as component,
+    2 as columns;
+select 
+    '/charts/debitbysubcat.sql?AccountId='|| :AccountId ||
                           '&startdate='|| :startdate ||
                           '&enddate='|| :enddate ||
                           CASE WHEN COALESCE(NULLIF(:CategoryId, ''), '-1')::int =-1 THEN ''
                           ELSE '&categoryid=' ||:CategoryId::int END ||
+                          '&_sqlpage_embed' as embed;
+select 
+    '/charts/creditbysubcat.sql?AccountId='|| :AccountId ||
+                          '&startdate='|| :startdate ||
+                          '&enddate='|| :enddate ||
                           '&_sqlpage_embed' as embed;
 
 select 
     'card' as component,
     2 as columns;
 select 
-    '/charts/creditbycat.sql?AccountId='|| :AccountId ||
+    '/charts/debitbytag.sql?AccountId='|| :AccountId ||
                           '&startdate='|| :startdate ||
                           '&enddate='|| :enddate ||
+                          CASE WHEN COALESCE(NULLIF(:CategoryId, ''), '-1')::int =-1 THEN ''
+                          ELSE '&categoryid=' ||:CategoryId::int END ||
                           '&_sqlpage_embed' as embed;
 select 
     '/charts/creditbytag.sql?AccountId='|| :AccountId ||
@@ -147,7 +185,7 @@ SELECT
     t.Description AS "Description",
     Type AS "Type",
     c.Name AS "Category",
-    --sous_categorie AS "Sub-Category",
+    sc.Name AS "Sub-Category",
     CASE
         WHEN COALESCE(Value, 0) < 0 THEN TO_CHAR(Value, 'FM999,999,999.00') || ' €'
         ELSE ''
@@ -158,9 +196,15 @@ SELECT
     END AS "Credit"
 FROM BudTransaction as t
 Join BudCategory as c on c.CategoryId=t.CategoryId
+Join BudSubCategory as sc on sc.SubCategoryId=t.SubCategoryId
 WHERE :AccountId IS NOT NULL
 AND AccountId=:AccountId::int
 AND Date between :startdate::date and :enddate::date
 AND (COALESCE(NULLIF(:CategoryId, ''), '-1')::int = -1 
      OR t.CategoryId = :CategoryId::int)
+AND (COALESCE(NULLIF(:SubcategoryId, ''), '-1')::int = -1 
+     OR t.SubCategoryId = :SubcategoryId::int)
 ORDER BY Date DESC, Transactionid DESC;
+
+select 'debug' as component;
+select :displaychart, COALESCE(NULLIF(:displaychart, ''), 'false')::bool;

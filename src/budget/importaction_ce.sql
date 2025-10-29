@@ -29,11 +29,20 @@ LEFT JOIN BudCategory on categorie = BudCategory.Name
 WHERE uploaded_file_id=$uploaded_file_id::int
 AND CategoryId is null;
 
--- Step 5: Import transactions into app transactions table
-INSERT INTO BudTransaction (AccountId, CategoryId, Date, Name, Description, Type, Value)
+-- Step 5: Import subcategories that doesn't exist
+INSERT INTO BudSubCategory (Name)
+SELECT distinct sous_categorie
+FROM caisse_epargne_transactions
+LEFT JOIN BudSubCategory on categorie = BudSubCategory.Name
+WHERE uploaded_file_id=$uploaded_file_id::int
+AND SubCategoryId is null;
+
+-- Step 6: Import transactions into app transactions table
+INSERT INTO BudTransaction (AccountId, CategoryId, SubCategoryId, Date, Name, Description, Type, Value)
 SELECT
     :AccountId::int,
     CategoryId,
+    SubCategoryId,
     date_comptabilisation,
     libelle_simplifie,
     libelle_operation,
@@ -41,35 +50,41 @@ SELECT
     COALESCE(debit,credit)
 FROM caisse_epargne_transactions
 LEFT JOIN BudCategory on categorie = BudCategory.Name
+LEFT JOIN BudSubCategory on sous_categorie = BudSubCategory.Name
 WHERE uploaded_file_id=$uploaded_file_id::int;
 
--- Step 6: Import tags that doesn't exist
-INSERT INTO BudTag (Name)
-SELECT distinct sous_categorie
-FROM caisse_epargne_transactions
-LEFT JOIN BudTag on sous_categorie = BudTag.Name
-WHERE uploaded_file_id=$uploaded_file_id::int
-AND TagId is null;
+-- -- Step 6: Import tags that doesn't exist
+-- INSERT INTO BudTag (Name)
+-- SELECT distinct sous_categorie
+-- FROM caisse_epargne_transactions
+-- LEFT JOIN BudTag on sous_categorie = BudTag.Name
+-- WHERE uploaded_file_id=$uploaded_file_id::int
+-- AND TagId is null;
 
--- Step 7: Assign tags to transactions
-INSERT INTO BudTransactionTag (TagId, TransactionId)
-SELECT TagId,
-       TransactionId
-FROM caisse_epargne_transactions
-JOIN BudTransaction on date_comptabilisation = BudTransaction.Date 
-                   AND libelle_simplifie = BudTransaction.Name
-                   AND type_operation = BudTransaction.Type
-                   AND COALESCE(debit,credit) = BudTransaction.Value
-JOIN BudTag on sous_categorie = BudTag.Name
-WHERE uploaded_file_id=$uploaded_file_id::int
-AND AccountId=:AccountId::int;
+-- -- Step 7: Assign tags to transactions
+-- INSERT INTO BudTransactionTag (TagId, TransactionId)
+-- SELECT TagId,
+--        TransactionId
+-- FROM caisse_epargne_transactions
+-- JOIN BudTransaction on date_comptabilisation = BudTransaction.Date 
+--                    AND libelle_simplifie = BudTransaction.Name
+--                    AND type_operation = BudTransaction.Type
+--                    AND COALESCE(debit,credit) = BudTransaction.Value
+-- JOIN BudTag on sous_categorie = BudTag.Name
+-- WHERE uploaded_file_id=$uploaded_file_id::int
+-- AND AccountId=:AccountId::int;
 
--- Step 8: Apply categories autoconfiguration
+-- Step 7: Apply categories autoconfiguration
 UPDATE BudTransaction
 SET CategoryId = cac.CategoryId
 FROM BudCategoryAutoConfiguration cac
 WHERE BudTransaction.Name = cac.TransactionName
 
+-- Step 8: Apply subcategories autoconfiguration
+UPDATE BudTransaction
+SET SubCategoryId = cac.SubCategoryId
+FROM BudSubCategoryAutoConfiguration cac
+WHERE BudTransaction.Name = cac.TransactionName
 
 -- Step 9: Apply tags autoconfiguration
 --!! TODO
