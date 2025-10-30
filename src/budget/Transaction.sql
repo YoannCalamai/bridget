@@ -57,7 +57,7 @@ SELECT
     'Change Category' AS title,
     'Edit' AS validate;
 
--- Name
+-- category
 SELECT 
     'CategoryId' as name,
     'Category' as label,
@@ -70,6 +70,22 @@ SELECT
         FROM BudCategory
     ) as options,
     (SELECT CASE WHEN $id IS NOT NULL THEN CategoryId ELSE -1 END 
+    FROM BudTransaction
+    WHERE TransactionId = $id::int) as value;
+
+-- subcategory
+SELECT 
+    'SubcategoryId' as name,
+    'Sub Category' as label,
+    'select' AS type,
+    true as required,
+    (
+        SELECT json_agg(
+                json_build_object('label', Name, 'value', SubCategoryId)
+            )
+        FROM BudSubCategory
+    ) as options,
+    (SELECT CASE WHEN $id IS NOT NULL THEN SubCategoryId ELSE -1 END 
     FROM BudTransaction
     WHERE TransactionId = $id::int) as value;
 

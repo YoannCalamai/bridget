@@ -9,7 +9,8 @@ AND $id::int NOT IN (SELECT TransactionId FROM BudTransaction);
 
 -- Upsert
 UPDATE BudTransaction
-SET CategoryId=:CategoryId::int
+SET CategoryId=:CategoryId::int,
+    SubCategoryId=:SubcategoryId::int
 WHERE TransactionId=$id::int;
 
 SELECT
