@@ -1,16 +1,17 @@
 -- Check session and admin right
 select 'dynamic' as component, sqlpage.run_sql('include/sessioncheck-user.sql') as properties;
 
--- Check input
-SELECT 'redirect' AS component,
-        './CategoriesTags.sql' AS link
-WHERE coalesce($id::int,0)>0 
-AND $id::int NOT IN (SELECT SubCategoryId FROM BudSubCategory);
 
--- Upsert
+--INSERT if no id
 INSERT INTO BudSubCategory (Name)
-VALUES (:Name)
-ON CONFLICT (Name) DO UPDATE SET Name = excluded.Name
-RETURNING
+SELECT :Name
+WHERE $id IS NULL;
+
+--UPDATE if id
+UPDATE BudSubCategory
+SET Name=:Name
+WHERE $id IS NOT NULL AND SubCategoryId=$id::int;
+
+SELECT 
     'redirect' AS component,
     './CategoriesTags.sql' as link;
