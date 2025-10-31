@@ -19,10 +19,10 @@ SELECT 'AccountId' AS name,
     (
         SELECT json_agg(
                 json_build_object('label', Name, 'value', AccountId)
+                ORDER BY Name
             )
         FROM BudAccount
         WHERE UserId= (SELECT UserId FROM GetUserFromSession WHERE Session = sqlpage.cookie('session'))
-        ORDER BY Name
     ) as options,
     TRUE AS required;
 
@@ -48,9 +48,9 @@ SELECT 'CategoryId' AS name,
     (
         SELECT json_agg(
                 json_build_object('label', Name, 'value', CategoryId)
+                ORDER BY Name
             )
         FROM BudCategory
-        ORDER BY Name
     ) as options,
     CASE WHEN :CategoryId IS NULL THEN '' 
     ELSE :CategoryId END as value;
@@ -63,9 +63,9 @@ SELECT 'SubcategoryId' AS name,
     (
         SELECT json_agg(
                 json_build_object('label', Name, 'value', SubCategoryId)
+                ORDER BY Name
             )
         FROM BudSubCategory
-        ORDER BY Name
     ) as options,
     CASE WHEN :SubcategoryId IS NULL THEN '' 
     ELSE :SubcategoryId END as value;

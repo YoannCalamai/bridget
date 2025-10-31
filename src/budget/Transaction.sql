@@ -66,9 +66,9 @@ SELECT
     (
         SELECT json_agg(
                 json_build_object('label', Name, 'value', CategoryId)
+                ORDER BY Name
             )
         FROM BudCategory
-        ORDER BY Name
     ) as options,
     (SELECT CASE WHEN $id IS NOT NULL THEN CategoryId ELSE -1 END 
     FROM BudTransaction
@@ -83,9 +83,9 @@ SELECT
     (
         SELECT json_agg(
                 json_build_object('label', Name, 'value', SubCategoryId)
+                ORDER BY Name
             )
         FROM BudSubCategory
-        ORDER BY Name
     ) as options,
     (SELECT CASE WHEN $id IS NOT NULL THEN SubCategoryId ELSE -1 END 
     FROM BudTransaction
