@@ -22,20 +22,24 @@ SELECT 'AccountId' AS name,
             )
         FROM BudAccount
         WHERE UserId= (SELECT UserId FROM GetUserFromSession WHERE Session = sqlpage.cookie('session'))
+        ORDER BY Name
     ) as options,
     TRUE AS required;
+
 SELECT 'startdate' AS name,
     'date' AS type,
     'From' AS label,
     CASE WHEN :startdate IS NULL THEN TO_CHAR(DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month'),'YYYY-MM-DD')
     ELSE :startdate END as value,
     TRUE AS required;
+
 SELECT 'enddate' AS name,
     'date' AS type,
     'To' AS label,
     CASE WHEN :enddate IS NULL THEN TO_CHAR(DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 day','YYYY-MM-DD') 
     ELSE :enddate END as value,
     TRUE AS required;
+
 SELECT 'CategoryId' AS name,
     'select' AS type,
     'Category' AS label,
@@ -46,9 +50,11 @@ SELECT 'CategoryId' AS name,
                 json_build_object('label', Name, 'value', CategoryId)
             )
         FROM BudCategory
+        ORDER BY Name
     ) as options,
     CASE WHEN :CategoryId IS NULL THEN '' 
     ELSE :CategoryId END as value;
+
 SELECT 'SubcategoryId' AS name,
     'select' AS type,
     'Sub Category' AS label,
@@ -59,6 +65,7 @@ SELECT 'SubcategoryId' AS name,
                 json_build_object('label', Name, 'value', SubCategoryId)
             )
         FROM BudSubCategory
+        ORDER BY Name
     ) as options,
     CASE WHEN :SubcategoryId IS NULL THEN '' 
     ELSE :SubcategoryId END as value;

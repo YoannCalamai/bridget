@@ -68,6 +68,7 @@ SELECT
                 json_build_object('label', Name, 'value', CategoryId)
             )
         FROM BudCategory
+        ORDER BY Name
     ) as options,
     (SELECT CASE WHEN $id IS NOT NULL THEN CategoryId ELSE -1 END 
     FROM BudTransaction
@@ -84,6 +85,7 @@ SELECT
                 json_build_object('label', Name, 'value', SubCategoryId)
             )
         FROM BudSubCategory
+        ORDER BY Name
     ) as options,
     (SELECT CASE WHEN $id IS NOT NULL THEN SubCategoryId ELSE -1 END 
     FROM BudTransaction
