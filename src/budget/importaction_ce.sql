@@ -33,7 +33,7 @@ AND CategoryId is null;
 INSERT INTO BudSubCategory (Name)
 SELECT distinct sous_categorie
 FROM caisse_epargne_transactions
-LEFT JOIN BudSubCategory on categorie = BudSubCategory.Name
+LEFT JOIN BudSubCategory on sous_categorie = BudSubCategory.Name
 WHERE uploaded_file_id=$uploaded_file_id::int
 AND SubCategoryId is null;
 
