@@ -14,8 +14,6 @@ DELETE FROM uploaded_file WHERE id=$id::int;
 
 SELECT
     'redirect' AS component,
-    './Import.sql' as link
-FROM uploaded_file
-WHERE uploaded_file.name=sqlpage.uploaded_file_name('csv_file');
+    './Import.sql' as link;
 
 
