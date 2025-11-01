@@ -91,34 +91,36 @@ SELECT
     FROM BudTransaction
     WHERE TransactionId = $id::int) as value;
 
--- SELECT 'divider' as component,
---        'Tags' as contents;
+SELECT 'divider' as component,
+       'Tags' as contents;
 
--- SELECT 'button' as component,
---         'sm' as size;
--- SELECT 'Assign a tag' as title,
---         './TransactionTag.sql?cid=' || $id as link,
---         'primary' as color,
---         'square-rounded-plus' as icon
--- WHERE $id is not null;
+SELECT 'button' as component,
+        'sm' as size;
+SELECT 'Assign a tag' as title,
+        './TransactionTag.sql?cid=' || $id as link,
+        'primary' as color,
+        'square-rounded-plus' as icon
+WHERE $id is not null;
 
--- SELECT 
---     'table' as component,
---     'IsActive' as icon,
---     'action' as markdown,
---     1 as sort,
---     1 as search;
--- SELECT
---     '[Edit](./TagAutoConfig.sql?cid=' || $id || '&id=' || TagAutoConfigurationId ||')' as Action,
---     TransactionName
--- FROM BudTagAutoConfiguration
--- WHERE TagId=$id::int
--- ORDER BY TransactionName;
+SELECT 
+    'table' as component,
+    'IsActive' as icon,
+    '/budget/TransactionTag.sql?cid=' || $id || '&id={id}' as edit_url,
+    '/budget/transactiontagDelete.sql?cid=' || $id || '&id={id}' as delete_url,
+    1 as sort,
+    1 as search;
+SELECT
+    TransactionTagId as _sqlpage_id,
+    Name
+FROM BudTransactionTag as tt
+JOIN BudTag as ta on tt.TagId = ta.TagId
+WHERE TransactionId=$id::int
+ORDER BY Name;
 
--- SELECT 'button' as component,
---         'sm' as size;;
--- SELECT 'Add an auto configuration' as title,
---         './TagAutoConfig.sql?cid=' || $id as link,
---         'primary' as color,
---         'square-rounded-plus' as icon
--- WHERE $id is not null;
+SELECT 'button' as component,
+        'sm' as size;
+SELECT 'Assign a tag' as title,
+        './TransactionTag.sql?cid=' || $id as link,
+        'primary' as color,
+        'square-rounded-plus' as icon
+WHERE $id is not null;
