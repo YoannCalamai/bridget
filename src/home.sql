@@ -70,11 +70,11 @@ SELECT 'SubcategoryId' AS name,
     CASE WHEN :SubcategoryId IS NULL THEN '' 
     ELSE :SubcategoryId END as value;
 
--- SELECT 'displaychart' AS name,
---     'checkbox' AS type,
---     'Display charts' AS label,
---      COALESCE(NULLIF(:displaychart, ''), 'true')::bool,
---      0 AS required;
+SELECT 'displaychart' AS name,
+    'checkbox' AS type,
+    'Display charts' AS label,
+    :displaychart IS NOT NULL as checked,
+     0 AS required;
 
 ----------------------
 -- Display statistics
@@ -128,7 +128,7 @@ AND Date between :startdate::date and :enddate::date;
 select 
     'card' as component,
     2 as columns
-WHERE NOT COALESCE(NULLIF(:displaychart, ''), 'false')::bool;
+WHERE :displaychart IS NOT NULL;
 select 
     '/charts/debitbycat.sql?AccountId='|| :AccountId ||
                           '&startdate='|| :startdate ||
@@ -136,45 +136,51 @@ select
                           CASE WHEN COALESCE(NULLIF(:CategoryId, ''), '-1')::int =-1 THEN ''
                           ELSE '&categoryid=' ||:CategoryId::int END ||
                           '&_sqlpage_embed' as embed
-WHERE NOT COALESCE(NULLIF(:displaychart, ''), 'false')::bool;
+WHERE :displaychart IS NOT NULL;
 select 
     '/charts/creditbycat.sql?AccountId='|| :AccountId ||
                           '&startdate='|| :startdate ||
                           '&enddate='|| :enddate ||
                           '&_sqlpage_embed' as embed
-WHERE NOT COALESCE(NULLIF(:displaychart, ''), 'false')::bool;
+WHERE :displaychart IS NOT NULL;
 
 select 
     'card' as component,
-    2 as columns;
+    2 as columns
+WHERE :displaychart IS NOT NULL;
 select 
     '/charts/debitbysubcat.sql?AccountId='|| :AccountId ||
                           '&startdate='|| :startdate ||
                           '&enddate='|| :enddate ||
                           CASE WHEN COALESCE(NULLIF(:CategoryId, ''), '-1')::int =-1 THEN ''
                           ELSE '&categoryid=' ||:CategoryId::int END ||
-                          '&_sqlpage_embed' as embed;
+                          '&_sqlpage_embed' as embed
+WHERE :displaychart IS NOT NULL;
 select 
     '/charts/creditbysubcat.sql?AccountId='|| :AccountId ||
                           '&startdate='|| :startdate ||
                           '&enddate='|| :enddate ||
-                          '&_sqlpage_embed' as embed;
+                          '&_sqlpage_embed' as embed
+WHERE :displaychart IS NOT NULL;
 
 select 
     'card' as component,
-    2 as columns;
+    2 as columns
+WHERE :displaychart IS NOT NULL;    
 select 
     '/charts/debitbytag.sql?AccountId='|| :AccountId ||
                           '&startdate='|| :startdate ||
                           '&enddate='|| :enddate ||
                           CASE WHEN COALESCE(NULLIF(:CategoryId, ''), '-1')::int =-1 THEN ''
                           ELSE '&categoryid=' ||:CategoryId::int END ||
-                          '&_sqlpage_embed' as embed;
+                          '&_sqlpage_embed' as embed
+WHERE :displaychart IS NOT NULL;
 select 
     '/charts/creditbytag.sql?AccountId='|| :AccountId ||
                           '&startdate='|| :startdate ||
                           '&enddate='|| :enddate ||
-                          '&_sqlpage_embed' as embed;
+                          '&_sqlpage_embed' as embed
+WHERE :displaychart IS NOT NULL;
 
 
 ----------------------
