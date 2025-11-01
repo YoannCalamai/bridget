@@ -34,11 +34,11 @@ SELECT 'Add a category' as title,
 SELECT 
     'table' as component,
     'IsActive' as icon,
-    'action' as markdown,
+    '/budget/Category.sql?id={id}' as edit_url,
     1 as sort,
     1 as search;
 SELECT
-    '[Edit](./Category.sql?id=' || CategoryId ||')' as Action,
+    CategoryId as _sqlpage_id,
     Name
 FROM BudCategory
 ORDER BY Name;
@@ -65,11 +65,11 @@ SELECT 'Add a subcategory' as title,
 SELECT 
     'table' as component,
     'IsActive' as icon,
-    'action' as markdown,
+    '/budget/Subcategory.sql?id={id}' as edit_url,
     1 as sort,
     1 as search;
 SELECT
-    '[Edit](./Subcategory.sql?id=' || SubCategoryId ||')' as Action,
+    SubCategoryId as _sqlpage_id,
     Name
 FROM BudSubCategory
 ORDER BY Name;
@@ -95,11 +95,11 @@ SELECT 'Add a tag' as title,
 SELECT 
     'table' as component,
     'IsActive' as icon,
-    'action' as markdown,
+    '/budget/Tag.sql?id={id}' as edit_url,
     1 as sort,
     1 as search;
 SELECT
-    '[Edit](./Tag.sql?id=' || TagId ||')' as Action,
+    TagId as _sqlpage_id,
     Name
 FROM BudTag
 ORDER BY Name;

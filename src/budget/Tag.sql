@@ -57,11 +57,11 @@ WHERE $id is not null;
 SELECT 
     'table' as component,
     'IsActive' as icon,
-    'action' as markdown,
+    '/budget/TagAutoConfig.sql?cid=' || $id || '&id={id}' as edit_url,
     1 as sort,
     1 as search;
 SELECT
-    '[Edit](./TagAutoConfig.sql?cid=' || $id || '&id=' || TagAutoConfigurationId ||')' as Action,
+    TagAutoConfigurationId as _sqlpage_id,
     TransactionName
 FROM BudTagAutoConfiguration
 WHERE TagId=$id::int

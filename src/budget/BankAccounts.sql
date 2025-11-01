@@ -29,11 +29,11 @@ SELECT 'Add a bank account' as title,
 SELECT 
     'table' as component,
     'IsActive' as icon,
-    'action' as markdown,
+    '/budget/BankAccount.sql?id={id}' as edit_url,
     1 as sort,
     1 as search;
 SELECT
-    '[Edit](./BankAccount.sql?id=' || AccountId ||')' as Action,
+    AccountId as _sqlpage_id,
     Name
 FROM BudAccount
 WHERE UserId= (SELECT UserId FROM GetUserFromSession WHERE Session = sqlpage.cookie('session'))

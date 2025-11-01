@@ -57,11 +57,11 @@ WHERE $id is not null;
 SELECT 
     'table' as component,
     'IsActive' as icon,
-    'action' as markdown,
+    '/budget/SubcategorieAutoConfig.sql?cid=' || $id || '&id={id}' as edit_url,
     1 as sort,
     1 as search;
 SELECT
-    '[Edit](./SubcategorieAutoConfig.sql?cid=' || $id || '&id=' || SubCategoryAutoConfigurationId ||')' as Action,
+    SubCategoryAutoConfigurationId as _sqlpage_id,
     TransactionName
 FROM BudSubCategoryAutoConfiguration
 WHERE SubCategoryId=$id::int

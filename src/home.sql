@@ -187,13 +187,13 @@ WHERE :displaychart IS NOT NULL;
 -- Show transactions
 SELECT 'table' AS component,
     'List of Transactions' AS title,
-    'action' as markdown,
+    '/budget/Transaction.sql?id={id}' as edit_url,
     TRUE AS sort,
     TRUE AS search,
     TRUE AS striped_rows
     WHERE :AccountId IS NOT NULL;
 SELECT 
-    '[Edit](/budget/Transaction.sql?id=' || TransactionId ||')' as Action,
+    TransactionId as _sqlpage_id,
     TO_CHAR(Date, 'DD/MM/YYYY') AS "Date",
     t.Name AS "Name",
     t.Description AS "Description",

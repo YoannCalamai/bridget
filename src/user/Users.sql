@@ -45,11 +45,11 @@ SELECT 'Add a user' as title,
 SELECT 
     'table' as component,
     'IsActive' as icon,
-    'action' as markdown,
+    '/user/User.sql?id={id}' as edit_url,
     1 as sort,
     1 as search;
 SELECT
-    '[Edit](./User.sql?id=' || UserId ||')' as Action,
+    UserId as _sqlpage_id,
     Firstname || ' ' || Lastname as User,
     Email,
     CASE IsActive WHEN true THEN 'check' ELSE '' END as IsActive,

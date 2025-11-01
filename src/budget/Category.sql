@@ -58,10 +58,11 @@ SELECT
     'table' as component,
     'IsActive' as icon,
     'action' as markdown,
+    '/budget/CategorieAutoConfig.sql?cid=' || $id || '&id={id}' as edit_url,
     1 as sort,
     1 as search;
 SELECT
-    '[Edit](./CategorieAutoConfig.sql?cid=' || $id || '&id=' || CategoryAutoConfigurationId ||')' as Action,
+    CategoryAutoConfigurationId as _sqlpage_id,
     TransactionName
 FROM BudCategoryAutoConfiguration
 WHERE CategoryId=$id::int

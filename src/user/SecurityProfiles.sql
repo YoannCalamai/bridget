@@ -35,12 +35,12 @@ SELECT 'Add a new Security Profile' as title,
 -- List
 SELECT 
     'table' as component,
-    'action' as markdown,
+    '/user/SecurityProfile.sql?id={id}' as edit_url,
     1 as striped_rows,
     1 as sort,
     1 as search;
 SELECT
-    '[Edit](./SecurityProfile.sql?id=' || SecurityProfileId ||')' as Action,
+    SecurityProfileId as _sqlpage_id,
     Name
 FROM CoreSecurityProfile
 WHERE SecurityProfileId > 0;
